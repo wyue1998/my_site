@@ -5,7 +5,7 @@ def index(requests):
     return render(requests, "blog/index.html", {})
 
 def posts(requests):
-    pass
+    return render(requests, "blog/posts.html", {})
 
 def get_post(requests, slug):
     pass
