@@ -6,26 +6,28 @@
     <link rel="stylesheet" href="{% static 'blog/post.css' %}">    
     <link rel="stylesheet" href="{% static 'blog/index.css' %}">
 {% endblock css %}
+
+
 {% block content %}
+<section id="welcome">
+    <header>
+        <img src="{% static 'blog/images/headshot.jpg' %}" alt="Will - The Author">
+    </header>
+    <h2>Will's Blog</h2>
+    <p>Hey, I'm Will. I'm making this blog to learn Django and review my HTML/CSS!</p>
+</section>
 
-    <section id="welcome">
-        <header>
-            <img src="{% static 'blog/images/headshot.jpg' %}" alt="Will - The Author">
-        </header>
-        <h2>Will's Blog</h2>
-        <p>Hey, I'm Will. I'm making this blog to learn Django and review my HTML/CSS!</p>
-    </section>
+<section id="latest-posts">
+    <h2>My Latest Thoughts</h2>
 
-    <section id="latest-posts">
-        <h2>My Latest Thoughts</h2>
-
-        <ul>
+    <ul>
+        {% for post in posts %}
             {% include 'blog/includes/post.html' %}
-        </ul>
-    </section>
-    <section id="about">
-        <h2>What I do</h2>
-        <p>Lately? Study, Eat, Swim, Sleep, repeat. Seven days a week.</p>
-    </section>
+        {% endfor %}
+    </ul>
+</section>
+<section id="about">
+    <h2>What I do</h2>
+    <p>Lately? Study, Eat, Swim, Sleep, repeat. Seven days a week.</p>
+</section>
 {% endblock content %}
-```
