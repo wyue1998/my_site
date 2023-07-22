@@ -1,5 +1,4 @@
 from datetime import date
-
 from django.shortcuts import render
 
 all_posts = [
@@ -72,8 +71,6 @@ all_posts = [
 def get_date(post):
     return post["date"]
 
-
-
 # Create your views here.
 def index(requests):
     sorted_posts = sorted(all_posts, key=get_date)
@@ -87,8 +84,14 @@ def index(requests):
     )
 
 def posts(requests):
-    return render(requests, "blog/posts.html", {})
+    return render(requests, "blog/posts.html", {
+        "posts": all_posts,
+    })
 
 
 def get_post(requests, slug):
-    return render(requests, "blog/post_detail.html", {})
+    post = next((post for post in all_posts if post["slug"] == slug), None)
+    return render(requests, "blog/post_detail.html", {
+        'post': post,
+    })
+
