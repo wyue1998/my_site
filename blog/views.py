@@ -97,6 +97,7 @@ class ReadLaterView(View):
         post_id = int(request.POST['post_id'])
         if post_id not in stored_posts:
             stored_posts.append(post_id)
+            request.session['stored_posts'] = stored_posts # If the request session is not updated with this line, the session database will not be saved.
             print(stored_posts)
             return HttpResponseRedirect("/posts/")
         print('This post is already in your read later list')
