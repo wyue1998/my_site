@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Post, Author, Tag
+from .models import Post, Author, Tag, Comment
 
 # Register your models here.
 
@@ -17,6 +17,10 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ("caption", "slug")
     prepopulated_fields = {"slug": ("caption",)}
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("username", "user_email", "post")
+
 admin.site.register(Post, PostAdmin)
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Tag, TagAdmin)
+admin.site.register(Comment, CommentAdmin)

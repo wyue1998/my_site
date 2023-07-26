@@ -17,6 +17,14 @@
             {% for tag in tags %}
                 <span class={{ tag.slug }}>{{ tag.caption }}</span>
             {% endfor %}
+            
+        </div>
+        <div id="read-later">
+            <form action="{% url 'read_later' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="post_id" value={{ post.id }}>
+            <button>Read Later</button>
+            </form>
         </div>
         
         <article>
@@ -33,4 +41,29 @@
             {{ post.content|linebreaks }}
         </p>
     </main>
+
+    <section id="comments">
+        <ul>
+            {% for comment in comments %}
+            <li>
+                <h2>{{ comment.username }}</h2>
+                <p>{{ comment|linebreaks }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <div>
+        <form action="{% url 'get_post' post.slug %}", method="POST" novalidate>
+        {% csrf_token %}
+            {% for form_field in comment_form %}
+            <div class="form-control">
+            {{ form_field.label_tag }}
+            {{ form_field }}
+            {{ form_field.errors }}
+            </div>
+            {% endfor %}
+        <button>Save Comment</button>
+        </form>
+    </div>
 {% endblock %}

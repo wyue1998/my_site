@@ -3,8 +3,11 @@ from typing import Any, Dict
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Author, Tag
 from django.views.generic.edit import CreateView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic import ListView, DetailView
+from .forms import CommentForm
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 all_posts = Post.objects.all()
 
@@ -32,18 +35,69 @@ class PostsView(ListView):
         return super().get_queryset().order_by("-date")
 
 
-class GetPostView(DetailView): # DetailView automatically retrieves the object based on slug
-    model = Post
-    template_name = "blog/post_detail.html"
-    # context_object_name = "post" # DetailView automatically calls object Model.lower() as context_object_name
+# class GetPostView(DetailView): # DetailView automatically retrieves the object based on slug
+#     model = Post
+#     template_name = "blog/post_detail.html"
+#     # context_object_name = "post" # DetailView automatically calls object Model.lower() as context_object_name
 
-    def get_context_data(self, **kwargs: Any):
-        context = super().get_context_data(**kwargs)
-        context['tags'] = self.object.tags.all()
-        return context
+#     def get_context_data(self, **kwargs: Any):
+#         context = super().get_context_data(**kwargs)
+#         context['tags'] = self.object.tags.all()
+#         context['comment_form'] = CommentForm()
+#         return context
+    
+class GetPostView(View):
+    def get(self, request, slug):
+        post = Post.objects.get(slug=slug)
+        context = {
+            'post': post,
+            'tags': post.tags.all(),
+            'comment_form': CommentForm(),
+            'comments': post.comments.all().order_by("-id"),
+        }
+        return render(request, 'blog/post_detail.html', context=context)
+
+    def post(self, request, slug):
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.post = Post.objects.get(slug=slug)
+            comment.save()
+            return HttpResponseRedirect(request.path)
+        else:
+            post = Post.objects.get(slug=slug)
+            context = {
+                'post': post,
+                'tags': post.tags.all(),
+                'comment_form': CommentForm(),
+                'comments': post.comments.all().order_by("-id"),
+            }
+            return render(request, 'blog/post_detail.html', context=context)
+
+
 
 class AddInfoView(CreateView):
     template_name = "blog/add_info.html"
     model = Post
     fields = ['upload_image']
     success_url = "/posts/"
+
+class ReadLaterView(View):
+    def get(self, request):
+        print(request.session.get('stored_posts', []))
+        stored_posts = request.session.get('stored_posts', [])
+        posts = Post.objects.filter(id__in=stored_posts) # __in is a lookup that allows us to filter based on a list of values
+        context = {
+            'posts': posts,
+        }
+        return render(request, 'blog/stored_posts.html', context=context)
+    
+    def post(self, request):
+        stored_posts = request.session.get('stored_posts', [])
+        post_id = int(request.POST['post_id'])
+        if post_id not in stored_posts:
+            stored_posts.append(post_id)
+            print(stored_posts)
+            return HttpResponseRedirect("/posts/")
+        print('This post is already in your read later list')
+        return HttpResponseRedirect("/posts/")
