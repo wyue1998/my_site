@@ -2,11 +2,14 @@
 {% load static %}
 
 {% block title %}Your Stored Posts{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static "blog/stored_posts.css" %}">
+{% endblock%}
 
 {% block content %}
 
     <h1>Your Stored Posts</h1>
-    <section>
+    <section id="stored-posts">
     {% if posts %}
         <ul>
             {% for post in posts %}

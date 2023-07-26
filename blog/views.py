@@ -20,11 +20,6 @@ class IndexView(ListView):
         queryset = super().get_queryset().order_by("-date")[:3]
         return queryset
     
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context["posts"] = all_posts.order_by("-date")[:3]
-    #     return context
-
 
 class PostsView(ListView):
     template_name = "blog/posts.html"
@@ -49,11 +44,20 @@ class PostsView(ListView):
 class GetPostView(View):
     def get(self, request, slug):
         post = Post.objects.get(slug=slug)
+        # Remove post from stored posts if it's already there
+        saved = False
+        stored_posts = request.session.get('stored_posts', [])
+        if post.id in stored_posts:
+            saved = True
+            stored_posts.remove(post.id)
+            request.session['stored_posts'] = stored_posts
+            print(stored_posts)
         context = {
             'post': post,
             'tags': post.tags.all(),
             'comment_form': CommentForm(),
             'comments': post.comments.all().order_by("-id"),
+            'saved': saved,
         }
         return render(request, 'blog/post_detail.html', context=context)
 

@@ -23,7 +23,9 @@
             <form action="{% url 'read_later' %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" value={{ post.id }} name="post_id" >
+                {% if not saved %}
                 <button>Read Later</button>
+                {% endif %}
             </form>
         </div>
         
@@ -43,6 +45,8 @@
     </main>
 
     <section id="comments">
+        <h2>Comments</h2>
+        {% if comments %}
         <ul>
             {% for comment in comments %}
             <li>
@@ -51,6 +55,9 @@
             </li>
             {% endfor %}
         </ul>
+        {% else %}
+        <p>No comments yet</p>
+        {% endif %}
     </section>
 
     <div>
