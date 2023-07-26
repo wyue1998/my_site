@@ -25,12 +25,13 @@ class Tag(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=100)
     excerpt = models.CharField(max_length=200, null=True)
-    image = models.CharField(max_length=100, default="")
+    # image = models.CharField(max_length=100, default="")
     date = models.DateField(auto_now=True)
     slug = models.SlugField(max_length=100, unique=True, null=True) #Both unique=True and SlugField db_index=True by default
     content = models.TextField(validators=[MinLengthValidator(10)])
     author = models.ForeignKey("Author", on_delete=models.SET_NULL, null=True, related_name="posts")
-    tags = models.ManyToManyField(Tag, related_name="posts")
+    tags = models.ManyToManyField(Tag, related_name="posts", blank=True)
+    image = models.ImageField(upload_to="images/", null=True, blank=True)
 
     def __str__(self):
         return self.title
