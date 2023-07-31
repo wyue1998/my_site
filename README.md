@@ -1,4 +1,4 @@
-# A blog using the DJango framework. Check it out! https://django-blog-wy.onrender.com/
+# A blog using the DJango framework. Check it out! https://django-blog-wy.onrender.com/. Currently suspended to stay within free range
 
 ## Skills/Tools used:
 * Django and associated packages  
